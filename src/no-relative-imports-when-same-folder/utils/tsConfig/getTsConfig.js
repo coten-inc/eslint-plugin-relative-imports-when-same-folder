@@ -26,7 +26,7 @@ export default function getTsConfig() {
 	if (!fs.existsSync(fpath)) {
 		return undefined;
 	}
-	const config = getTsconfigRaw(fpath);
+	const { config } = getTsconfigRaw(fpath);
 
 	return config;
 }
