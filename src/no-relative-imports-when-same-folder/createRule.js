@@ -1,9 +1,9 @@
 import pathModule from 'path';
 
-import { getTsconfig } from 'get-tsconfig';
 import checkIfPathCanBeResolved from './utils/checkIfPathCanBeResolved';
 import checkIfRelativePath from './utils/checkIfRelativePath';
 import checkIfTsConfigAdaptsModuleResolution from './utils/tsConfig/checkIfTsConfigAdaptsModuleResolution';
+import getTsConfig from './utils/tsConfig/getTsConfig';
 import resolveImportPathsBasedOnTsConfig from './utils/tsConfig/resolveImportPathsBasedOnTsConfig';
 
 export const messageIds = {
@@ -24,7 +24,7 @@ function createRule(context) {
 	const linterCwd = context.getCwd(); // cwd passed to `Linter`, see https://eslint.org/docs/developer-guide/nodejs-api#linter
 	const dirOfInspectedFile = pathModule.dirname(filename); //  "/Users/spic/dev/some_repo/src/library/Foo/Bar"
 
-	const tsConfig = getTsconfig();
+	const tsConfig = getTsConfig();
 
 	if (!tsConfig) {
 		throw new Error(`No tsconfig found. \n\n${ERROR_INFO}\n\n`);

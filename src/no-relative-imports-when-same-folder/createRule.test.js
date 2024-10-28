@@ -1,12 +1,8 @@
-import { getTsconfig } from 'get-tsconfig';
 import createRule, { messageIds } from './createRule';
+import getTsConfig from './utils/tsConfig/getTsConfig';
 import checkIfPathCanBeResolved from './utils/checkIfPathCanBeResolved';
 
-jest.mock('get-tsconfig', () => {
-	return {
-		getTsconfig: jest.fn(),
-	};
-});
+jest.mock('./utils/tsConfig/getTsConfig');
 
 jest.mock('./utils/checkIfPathCanBeResolved', () => {
 	const actual = jest.requireActual('./utils/checkIfPathCanBeResolved');
@@ -38,7 +34,7 @@ const runRuleForPath = ({
 	inspectedFilePath,
 	tsConfig = defaultTsConfig,
 }) => {
-	getTsconfig.mockReturnValueOnce(tsConfig);
+	getTsConfig.mockReturnValueOnce(tsConfig);
 
 	const node = {
 		source: {
