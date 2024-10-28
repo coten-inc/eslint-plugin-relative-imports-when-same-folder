@@ -1,6 +1,6 @@
 {
-  "name": "eslint-plugin-relative-imports-when-same-folder",
-  "version": "0.0.4",
+  "name": "@coten-inc/eslint-plugin-relative-imports-when-same-folder",
+  "version": "0.0.5",
   "description": "An eslint plugin to convert any absolute import paths to relative ones if files are imported from within the same folder",
   "main": "dist/index.js",
   "scripts": {
@@ -37,6 +37,7 @@
   "homepage": "https://github.com/spicattutti/eslint-plugin-relative-imports-when-same-folder#readme",
   "dependencies": {
     "enhanced-resolve": "^5.9.3",
+    "get-tsconfig": "4.8.1",
     "ramda": "^0.28.0"
   },
   "devDependencies": {
