@@ -1,5 +1,6 @@
 export default function checkIfTsConfigAdaptsModuleResolution(tsConfig) {
 	const { compilerOptions } = tsConfig;
 
-	return 'baseUrl' in compilerOptions;
+	// TypeScript 6 deprecated `baseUrl`; `paths` alone is now sufficient
+	return 'baseUrl' in compilerOptions || 'paths' in compilerOptions;
 }

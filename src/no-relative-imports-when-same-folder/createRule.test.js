@@ -77,6 +77,50 @@ describe('createRule', () => {
 		});
 	});
 
+	describe('with TypeScript 6 style config (paths only, no baseUrl)', () => {
+		const tsConfig = {
+			compilerOptions: {
+				paths: {
+					'@library': ['./src/library/index.js'],
+					'@library/*': ['./src/library/*'],
+				},
+			},
+		};
+
+		it('reports an error for an import from the same folder', () => {
+			runRuleForPath({
+				inspectedFilePath:
+					'/Users/spic/dev/some_repo/src/library/components/FormCheckbox/FormCheckbox.tsx',
+				importPath: '@library/components/FormCheckbox/Form.scss',
+				tsConfig,
+			});
+
+			expect(defaultContext.report).toHaveBeenCalledWith({
+				data: {
+					fixedImportPath: './Form.scss',
+				},
+				fix: expect.any(Function),
+				messageId: messageIds.importCanBeRelative,
+				node: {
+					source: {
+						value: '@library/components/FormCheckbox/Form.scss',
+					},
+				},
+			});
+		});
+
+		it('does not report an error for an import from a sibling folder', () => {
+			runRuleForPath({
+				inspectedFilePath:
+					'/Users/spic/dev/some_repo/src/library/components/FormCheckbox/FormCheckbox.tsx',
+				importPath: '@library/components/Form/Form.scss',
+				tsConfig,
+			});
+
+			expect(defaultContext.report).not.toHaveBeenCalled();
+		});
+	});
+
 	describe('for absolute import paths', () => {
 		const tsConfig = {
 			compilerOptions: {

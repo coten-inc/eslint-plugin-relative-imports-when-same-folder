@@ -15,6 +15,42 @@ describe('resolveImportPathBasedOnTsConfig', () => {
 		expect(possiblePaths[0]).toBe('src/components/foo');
 	});
 
+	describe('when tsConfig only states `paths` (TypeScript 6 style, no baseUrl)', () => {
+		const tsConfig = {
+			compilerOptions: {
+				paths: {
+					'@library': ['./src/library/src/index.js'],
+					'@library/*': ['./src/library/src/*'],
+				},
+			},
+		};
+
+		it('handles aliases that do not state a wildcard', () => {
+			const possiblePaths = resolveImportPathsBasedOnTsConfig({
+				tsConfig,
+				importPath: '@library',
+			});
+			expect(possiblePaths).toEqual(['./src/library/src/index.js']);
+		});
+
+		it('handles aliases that state a wildcard', () => {
+			const possiblePaths = resolveImportPathsBasedOnTsConfig({
+				tsConfig,
+				importPath: '@library/foo',
+			});
+			// pathModule.join normalizes './' prefix
+			expect(possiblePaths).toEqual(['src/library/src/foo']);
+		});
+
+		it('returns the import path as-is when no alias matches', () => {
+			const possiblePaths = resolveImportPathsBasedOnTsConfig({
+				tsConfig,
+				importPath: 'some-package',
+			});
+			expect(possiblePaths).toEqual(['some-package']);
+		});
+	});
+
 	describe('when tsConfig also states paths', () => {
 		const tsConfig = {
 			compilerOptions: {
