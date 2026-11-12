@@ -1,0 +1,5 @@
+# このリポジトリの主担当（コードオーナー）。
+# Dependabot のアラートやセキュリティパッチの対応は主担当が担う。
+# GitHub は、ここで決めた人に PR のレビューを自動で依頼する（PR の作成者本人は除く）。
+# 書式: https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
+* @tomoya55
