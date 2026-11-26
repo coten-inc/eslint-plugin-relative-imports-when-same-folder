@@ -1,0 +1,47 @@
+name: actions-lock-verify
+
+# lockfile に登録した workflow の uses: と .github/workflows/actions.lock がずれていないかを検証する。
+# 作り直しは、Renovate の更新 PR では Renovate が行い、それ以外は PR の作成者が行う。
+#
+# この workflow 自体は lockfile に登録せず、uses: をコミット SHA で固定する。登録すると、
+# 自分の uses: を変えた PR で startup_failure になり、検証の結果が出なくなるため。
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - .github/workflows/**
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+env:
+  GH_ACTIONS_LOCK_VERSION: v0.4.1
+  # 段階導入中に lockfile へ登録した workflow。全件を登録したら引数なしの --verify に切り替える。
+  ONBOARDED_WORKFLOWS: >-
+    .github/workflows/test_build_and_publish.yml
+
+jobs:
+  verify:
+    name: verify
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - run: gh extension install github/gh-actions-lock --pin "$GH_ACTIONS_LOCK_VERSION"
+      - name: Verify lockfile
+        run: |
+          # shellcheck disable=SC2086 # 空白区切りの path 一覧を引数に展開する
+          if ! gh actions-lock --verify $ONBOARDED_WORKFLOWS; then
+            echo "::error::actions.lock が workflow と合っていません。gh extension install github/gh-actions-lock --pin $GH_ACTIONS_LOCK_VERSION のうえ、gh actions-lock $ONBOARDED_WORKFLOWS を実行して commit してください。"
+            exit 1
+          fi
